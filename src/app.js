@@ -19,11 +19,11 @@ const PORT = 5000;
 
 app.post('/sign-up', (req, res) => {
     if (!req.body.username || !req.body.avatar) {
-        res.sendStatus(400);
+        res.status(400).send("username ou avatar inválidos");
         return;
     }
-    if (!typeof(req.body.username) === "string" || !typeof(req.body.avatar) === "string") {
-        res.sendStatus(400)
+    if (!(typeof(req.body.username) === "string") || !(typeof(req.body.avatar) === "string")) {
+        res.status(400).send("Username ou avatar não são strings");
     }
     users.push(req.body);
     res.send("OK/CREATED");
