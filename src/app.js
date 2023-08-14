@@ -1,4 +1,4 @@
-import express from "express";
+import express, { query } from "express";
 import cors from 'cors';
 
 function obterUltimosElementos(array) {
@@ -7,6 +7,20 @@ function obterUltimosElementos(array) {
     const ultimosElementos = array.slice(tamanhoArray - quantidadeRetorno);
     return ultimosElementos;
 }
+
+function obterElementosPaginados(array, pagina) {
+    const elementosPorPagina = 10;
+    const startIndex = (pagina - 1) * elementosPorPagina;
+    const endIndex = startIndex + elementosPorPagina;
+
+    if (startIndex >= array.length) {
+        return []; // Retorna um array vazio se a página estiver fora dos limites
+    }
+
+    const elementosPagina = array.slice(startIndex, endIndex);
+    return elementosPagina;
+}
+
 
 const users = [];
 const tweets = [];
@@ -60,9 +74,34 @@ app.post('/tweets', (req, res) => {
 })
 
 app.get('/tweets', (req, res) => {
-    const obj = obterUltimosElementos(tweets);
+    const page = req.query.page;
+    if (page) {
+        if (page >= 1) {
+            const obj = obterElementosPaginados(tweets, page);
+            res.send(obj);
+        }
+        else {
+            res.status(400).send("Informe uma página válida!");
+        }
+    }
+    const obj = obterElementosPaginados(tweets, 1);
     res.send(obj);
 })
+
+app.get('/tweets/:USERNAME', (req, res) => {
+    const name = req.params.USERNAME;
+    const twts = [];
+    if (users.length === 0) {
+        res.send([]);
+    }
+    tweets.forEach(x => {
+        if (x.username === name) {
+            twts.push(x);
+        }
+    });
+    res.send(twts);
+})
+
 app.listen(PORT, () => console.log('Listening in port ' + PORT));
 
 /* 
