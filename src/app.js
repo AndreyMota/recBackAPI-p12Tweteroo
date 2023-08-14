@@ -26,11 +26,18 @@ app.post('/sign-up', (req, res) => {
         res.status(400).send("Username ou avatar não são strings");
     }
     users.push(req.body);
-    res.send("OK/CREATED");
+    res.status(201).send("OK/CREATED");
 });
 
 
 app.post('/tweets', (req, res) => {
+    if (!req.body.username || !req.body.tweet) {
+        res.status(400).send("username ou tweet inválidos");
+        return;
+    }
+    if (!(typeof(req.body.username) === "string") || !(typeof(req.body.tweet) === "string")) {
+        res.status(400).send("Username ou tweet não são strings");
+    }
     let tem = false;
     if (users.length === 0) {
         res.status(401).send('UNAUTHERIZED');
@@ -49,7 +56,7 @@ app.post('/tweets', (req, res) => {
         res.status(401).send('UNAUTHERIZED');
     }
     
-    res.send("OK/CREATED");
+    res.status(201).send("OK/CREATED");
 })
 
 app.get('/tweets', (req, res) => {
