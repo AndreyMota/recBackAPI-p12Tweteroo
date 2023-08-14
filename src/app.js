@@ -22,6 +22,9 @@ app.post('/sign-up', (req, res) => {
         res.sendStatus(400);
         return;
     }
+    if (!typeof(req.body.username) === "string" || !typeof(req.body.avatar) === "string") {
+        res.sendStatus(400)
+    }
     users.push(req.body);
     res.send("OK/CREATED");
 });
